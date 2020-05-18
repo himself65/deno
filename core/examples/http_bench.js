@@ -120,7 +120,7 @@ async function serve(rid) {
   close(rid);
 }
 
-let ops = Deno.core.ops();
+const ops = Deno.core.ops();
 for (const opName in ops) {
   Deno.core.setAsyncHandler(ops[opName], handleAsyncMsgFromRust);
 }
