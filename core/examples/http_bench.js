@@ -120,27 +120,21 @@ async function serve(rid) {
   close(rid);
 }
 
-let ops;
-
-async function main() {
-  ops = Deno.core.ops();
-  for (const opName in ops) {
-    Deno.core.setAsyncHandler(ops[opName], handleAsyncMsgFromRust);
-  }
-
-  Deno.core.print("http_bench.js start\n");
-
-  const listenerRid = listen();
-  Deno.core.print(`listening http://127.0.0.1:4544/ rid=${listenerRid}\n`);
-  while (true) {
-    const rid = await accept(listenerRid);
-    // Deno.core.print(`accepted ${rid}`);
-    if (rid < 0) {
-      Deno.core.print(`accept error ${rid}`);
-      return;
-    }
-    serve(rid);
-  }
+let ops = Deno.core.ops();
+for (const opName in ops) {
+  Deno.core.setAsyncHandler(ops[opName], handleAsyncMsgFromRust);
 }
 
-main();
+Deno.core.print("http_bench.js start\n");
+
+const listenerRid = listen();
+Deno.core.print(`listening http://127.0.0.1:4544/ rid=${listenerRid}\n`);
+while (true) {
+  const rid = await accept(listenerRid);
+  // Deno.core.print(`accepted ${rid}`);
+  if (rid < 0) {
+    Deno.core.print(`accept error ${rid}`);
+    break;
+  }
+  serve(rid);
+}
